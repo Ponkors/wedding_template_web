@@ -8,6 +8,7 @@ import 'section_divider.dart';
 class DetailsSection extends StatelessWidget {
   const DetailsSection({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
