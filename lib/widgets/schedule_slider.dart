@@ -32,7 +32,7 @@ class _ScheduleSliderState extends State<ScheduleSlider> {
     {
       'time': '14:30',
       'title': 'Фуршет',
-      'location': 'Франопольское городище',
+      'location': 'Название локации',
       'address': AppConstants.weddingAddress,
       'image': 'assets/images/franopol.jpg',
       'showLocationButton': true,
@@ -41,7 +41,7 @@ class _ScheduleSliderState extends State<ScheduleSlider> {
     {
       'time': '15:00',
       'title': 'Регистрация',
-      'location': 'Франопольское городище',
+      'location': 'Название локации',
       'address': AppConstants.weddingAddress,
       'image': 'assets/images/wedding_registration.jpg.webp',
       'showLocationButton': false,

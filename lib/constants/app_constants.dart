@@ -1,10 +1,10 @@
 class AppConstants {
-  static const String brideName = 'Valeria';
-  static const String groomName = 'Vladislav';
-  static final DateTime weddingDate = DateTime(2025, 6, 1, 14, 0);
-  static const String weddingDateString = '1 июня 2025, 14:30';
-  static const String weddingLocation = 'Агроусадьба "Фронопольское городище"';
-  static const String weddingAddress = 'ул. Советских Партизан, 58, \nд. Фронополь, Брестская область';
+  static const String brideName = 'Невеста';
+  static const String groomName = 'Жених';
+  static final DateTime weddingDate = DateTime(2026, 1, 1, 0, 0);
+  static const String weddingDateString = '1 января 2026, 00:00';
+  static const String weddingLocation = 'Название локации"';
+  static const String weddingAddress = 'ул. Свадебная, 1, \nг. Свадебный, Минская область';
   
   // Цветовая схема
   static const int primaryColorValue = 0xFF2E7D32; // Зеленый
@@ -96,8 +96,8 @@ class AppConstants {
   ];
 
   // Координаты места проведения
-  static const double weddingLatitude = 52.074007;
-  static const double weddingLongitude = 23.991468;
+  static const double weddingLatitude = 53.9006;
+  static const double weddingLongitude = 27.5590;
   
   // Ссылка на Яндекс.Карты
   static String getYandexMapsUrl() {
