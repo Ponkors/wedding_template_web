@@ -12,7 +12,6 @@ class LocationSection extends StatefulWidget {
   State<LocationSection> createState() => _LocationSectionState();
 }
 
-
 class _LocationSectionState extends State<LocationSection> {
   bool _isImageReady = false;
 
