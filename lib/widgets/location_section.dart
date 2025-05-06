@@ -18,7 +18,6 @@ class _LocationSectionState extends State<LocationSection> {
   @override
   void initState() {
     super.initState();
-    // Инициализация, если необходимо
     _isImageReady = true;
   }
 
