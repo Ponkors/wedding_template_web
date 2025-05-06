@@ -1,1 +1,0 @@
- C:\\Users\\User\\Desktop\\Ponkors.github.io\\.dart_tool\\flutter_gen\\gen_l10n\\app_localizations_ru.dart C:\\Users\\User\\Desktop\\Ponkors.github.io\\.dart_tool\\flutter_gen\\gen_l10n\\app_localizations.dart:  C:\\Users\\User\\Desktop\\Ponkors.github.io\\l10n.yaml C:\\Users\\User\\Desktop\\Ponkors.github.io\\lib/l10n\\app_ru.arb
