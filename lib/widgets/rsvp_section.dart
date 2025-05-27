@@ -230,7 +230,7 @@ class _RSVPSectionState extends State<RSVPSection> {
                   child: _buildAttendanceOption(
                     value: false,
                     icon: Icons.cancel_outlined,
-                    label: 'К сожалению, нет',
+                    label: 'Не смогу :(',
                     color: Colors.red,
                   ),
                 ),
