@@ -1,0 +1,1 @@
+ /Users/vlad_kiricuk/Desktop/wedding_template_web/.dart_tool/flutter_gen/gen_l10n/app_localizations_ru.dart /Users/vlad_kiricuk/Desktop/wedding_template_web/.dart_tool/flutter_gen/gen_l10n/app_localizations.dart:  /Users/vlad_kiricuk/Desktop/wedding_template_web/l10n.yaml /Users/vlad_kiricuk/Desktop/wedding_template_web/lib/l10n/app_ru.arb
