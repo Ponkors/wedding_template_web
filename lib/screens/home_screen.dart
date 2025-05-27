@@ -23,6 +23,7 @@ class HomeScreen extends StatelessWidget {
     final locationKey = GlobalKey();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
