@@ -13,205 +13,265 @@ class LocationSection extends StatefulWidget {
 }
 
 class _LocationSectionState extends State<LocationSection> {
-  bool _isImageReady = false;
+  bool _isMapLoaded = false;
+  bool _isHovered = false;
 
   @override
   void initState() {
     super.initState();
-    _isImageReady = true;
+    // Имитация загрузки карты
+    Future.delayed(500.ms, () => setState(() => _isMapLoaded = true));
   }
 
-  Future<void> _openYandexMaps() async {
+  Future<void> _launchMap() async {
     final url = Uri.parse(AppConstants.getYandexMapsUrl());
     if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
 
-  String _getMapUrl() {
-    final latitude = AppConstants.weddingLatitude;
-    final longitude = AppConstants.weddingLongitude;
-    final zoom = 10;
-    return 'https://static-maps.yandex.ru/1.x/?ll=$longitude,$latitude&z=$zoom&size=650,400&l=map&pt=$longitude,$latitude,comma';
+  String _getStaticMapUrl() {
+    final lat = AppConstants.weddingLatitude;
+    final lng = AppConstants.weddingLongitude;
+    return 'https://static-maps.yandex.ru/1.x/?ll=$lng,$lat&z=15&size=650,400&l=map&pt=$lng,$lat,pm2dol1';
   }
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = MediaQuery.of(context).size.width < 600;
+    final cardPadding = isSmallScreen ? 20.0 : 30.0;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 60),
-      color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: 80, horizontal: isSmallScreen ? 20 : 40),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white,
+            Colors.grey[50]!,
+          ],
+        ),
+      ),
       child: Column(
         children: [
           const SectionTitle(
             title: AppConstants.locationTitleText,
-            subtitle: 'Как нас найти',
+            subtitle: 'Место проведения торжества',
           ),
-          const SizedBox(height: 40),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            height: MediaQuery.of(context).size.height * 0.1,
-            constraints: const BoxConstraints(
-              minHeight: 200,
-              maxHeight: 500,
+          const SizedBox(height: 50),
+
+          // Интерактивная карта
+          MouseRegion(
+            onEnter: (_) => setState(() => _isHovered = true),
+            onExit: (_) => setState(() => _isHovered = false),
+            child: GestureDetector(
+              onTap: _launchMap,
+              child: AnimatedContainer(
+                duration: 300.ms,
+                height: isSmallScreen ? 220 : 300,
+                margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 0 : 40),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(_isHovered ? 0.2 : 0.1),
+                      blurRadius: _isHovered ? 20 : 10,
+                      offset: Offset(0, _isHovered ? 8 : 4),
+                    ),
+                  ],
+                  border: Border.all(
+                    color: Colors.grey[200]!,
+                    width: 1,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (_isMapLoaded)
+                        Image.network(
+                          _getStaticMapUrl(),
+                          fit: BoxFit.cover,
+                          loadingBuilder: (_, child, progress) {
+                            return progress == null
+                                ? child
+                                : Center(child: CircularProgressIndicator());
+                          },
+                        )
+                      else
+                        Center(child: CircularProgressIndicator()),
+
+                      // Затемнение при наведении
+                      if (_isHovered)
+                        Container(
+                          color: Colors.black.withOpacity(0.2),
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Text(
+                                'Открыть в Яндекс.Картах',
+                                style: GoogleFonts.raleway(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ),
+          )
+              .animate()
+              .fadeIn(duration: 600.ms)
+              .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuart),
+
+          const SizedBox(height: 40),
+
+          // Карточка с информацией
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 0 : 40),
+            padding: EdgeInsets.all(cardPadding),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
               ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Stack(
-                children: [
-                  if (_isImageReady)
-                    GestureDetector(
-                      onTap: _openYandexMaps,
-                      child: Image.network(
-                        _getMapUrl(),
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  else
-                    Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(duration: const Duration(milliseconds: 800)).slideY(begin: 0.2, end: 0),
-          const SizedBox(height: 30),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.grey[200]!,
-                width: 1,
-              ),
-            ),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.amber[50],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.location_city, color: Colors.amber),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppConstants.weddingLocation,
-                            style: GoogleFonts.playfairDisplay(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            AppConstants.weddingAddress,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                _buildInfoRow(
+                  icon: Icons.location_on_rounded,
+                  iconColor: Colors.redAccent,
+                  title: 'Место проведения',
+                  subtitle: AppConstants.weddingLocation,
+                  description: AppConstants.weddingAddress,
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.access_time, color: Colors.blue),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Время начала',
-                            style: GoogleFonts.playfairDisplay(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            AppConstants.weddingDateString,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                const Divider(height: 1, color: Colors.grey),
+                const SizedBox(height: 20),
+                _buildInfoRow(
+                  icon: Icons.calendar_today_rounded,
+                  iconColor: Colors.blueAccent,
+                  title: 'Дата и время',
+                  subtitle: AppConstants.weddingDateString,
+                  description: 'Рекомендуем прибыть за 30 минут до начала',
                 ),
               ],
             ),
-          ).animate().fadeIn(duration: const Duration(milliseconds: 800)).slideY(begin: 0.2, end: 0),
-          const SizedBox(height: 20),
-          GestureDetector(
-            onTap: _openYandexMaps,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: Colors.green[100]!,
-                  width: 1,
-                ),
+          )
+              .animate()
+              .fadeIn(delay: 200.ms, duration: 600.ms)
+              .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuart),
+
+          const SizedBox(height: 30),
+
+          // Кнопка маршрута
+          ElevatedButton(
+            onPressed: _launchMap,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF3366FF),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.directions_car, color: Colors.green[700]),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Нажмите, чтобы построить маршрут',
-                    style: TextStyle(
-                      color: Colors.green[700],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+              elevation: 0,
+              shadowColor: Colors.transparent,
             ),
-          ).animate().fadeIn(duration: const Duration(milliseconds: 800)).slideY(begin: 0.2, end: 0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.directions, size: 20),
+                const SizedBox(width: 10),
+                Text(
+                  'Построить маршрут',
+                  style: GoogleFonts.raleway(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          )
+              .animate()
+              .fadeIn(delay: 400.ms, duration: 600.ms)
+              .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuart)
+              .shimmer(delay: 800.ms, duration: 1000.ms),
         ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  Widget _buildInfoRow({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    String? description,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: iconColor, size: 24),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: GoogleFonts.raleway(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+              if (description != null) ...[
+                const SizedBox(height: 6),
+                Text(
+                  description,
+                  style: GoogleFonts.raleway(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

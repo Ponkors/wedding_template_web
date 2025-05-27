@@ -11,7 +11,7 @@ class ScrollIndicator extends StatelessWidget {
         const Text(
           'Прокрутите вниз',
           style: TextStyle(
-            color: const Color.fromRGBO(93,92,88,1),
+            color: Colors.white70,
             fontSize: 14,
             fontWeight: FontWeight.w300,
           ),
@@ -22,8 +22,8 @@ class ScrollIndicator extends StatelessWidget {
           height: 50,
           decoration: BoxDecoration(
             border: Border.all(
-              color: const Color.fromRGBO(93,92,88,1).withOpacity(0.3),
-              width: 1,
+              color: Colors.white70.withOpacity(0.3),
+              width: 2,
             ),
             borderRadius: BorderRadius.circular(15),
           ),
@@ -34,7 +34,7 @@ class ScrollIndicator extends StatelessWidget {
                 width: 4,
                 height: 4,
                 decoration: const BoxDecoration(
-                  color: const Color.fromRGBO(93,92,88,1),
+                  color: Colors.white70,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -43,7 +43,7 @@ class ScrollIndicator extends StatelessWidget {
                 width: 4,
                 height: 4,
                 decoration: const BoxDecoration(
-                  color: const Color.fromRGBO(93,92,88,1),
+                  color: Colors.white70,
                   shape: BoxShape.circle,
                 ),
               ),

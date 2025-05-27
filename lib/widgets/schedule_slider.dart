@@ -5,16 +5,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wedding/widgets/section_title.dart';
 import '../constants/app_constants.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 class ScheduleSlider extends StatefulWidget {
   final GlobalKey locationKey;
-  
+
   const ScheduleSlider({
     super.key,
     required this.locationKey,
   });
 
   @override
-  State<ScheduleSlider> createState() => _ScheduleSliderState();
+  State<ScheduleSlider> createState() =>
+      _ScheduleSliderState();
 }
 
 class _ScheduleSliderState extends State<ScheduleSlider> {
@@ -26,26 +31,26 @@ class _ScheduleSliderState extends State<ScheduleSlider> {
       'location': AppConstants.churchName,
       'address': AppConstants.churchAddress,
       'image': AppConstants.churchImage,
-      'showLocationButton': false,
-      'showAttentionButton': true,
+      'icon': Icons.church,
+      'color': Colors.blue.shade100,
     },
     {
       'time': '14:30',
       'title': 'Фуршет',
-      'location': 'Название локации',
+      'location': 'Ресторан "Весна"',
       'address': AppConstants.weddingAddress,
       'image': 'assets/images/franopol.jpg',
-      'showLocationButton': true,
-      'showAttentionButton': false,
+      'icon': Icons.restaurant,
+      'color': Colors.amber.shade100,
     },
     {
       'time': '15:00',
       'title': 'Регистрация',
-      'location': 'Название локации',
+      'location': 'ЗАГС Центральный',
       'address': AppConstants.weddingAddress,
       'image': 'assets/images/wedding_registration.jpg.webp',
-      'showLocationButton': false,
-      'showAttentionButton': false,
+      'icon': Icons.heart_broken,
+      'color': Colors.pink.shade100,
     },
   ];
 
@@ -54,7 +59,7 @@ class _ScheduleSliderState extends State<ScheduleSlider> {
     if (context != null) {
       Scrollable.ensureVisible(
         context,
-        duration: const Duration(milliseconds: 500),
+        duration: 500.ms,
         curve: Curves.easeInOut,
       );
     }
@@ -64,231 +69,217 @@ class _ScheduleSliderState extends State<ScheduleSlider> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 600;
-    
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 80),
-      decoration: const BoxDecoration(
-        color: const Color(AppConstants.backgroundColorValue),
-        image: DecorationImage(
-          image: const AssetImage('assets/images/pattern.png'),
-          repeat: ImageRepeat.repeat,
-          opacity: 0.05,
-        ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SectionTitle(
-              title: 'Тайминг дня',
-              subtitle: 'Расписание',
-            ),
-            const SizedBox(height: 30),
-            CarouselSlider.builder(
-              itemCount: _schedules.length,
-              options: CarouselOptions(
-                height: MediaQuery.of(context).size.height * 0.7,
-                viewportFraction: 0.8,
-                enlargeCenterPage: true,
-                autoPlay: false,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-              ),
-              itemBuilder: (context, index, realIndex) {
-                return _buildScheduleCard(_schedules[index], isSmallScreen);
-              },
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _schedules.asMap().entries.map((entry) {
-                return Container(
-                  width: 8.0,
-                  height: 8.0,
-                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(AppConstants.primaryColorValue).withOpacity(
-                      _currentIndex == entry.key ? 0.9 : 0.4,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white,
+            Colors.grey.shade50,
           ],
         ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Расписание дня',
+            style: GoogleFonts.playfairDisplay(
+              fontSize: isSmallScreen ? 28 : 36,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Наши самые важные моменты',
+            style: GoogleFonts.playfairDisplay(
+              fontSize: isSmallScreen ? 18 : 32,
+              fontWeight: FontWeight.w300,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 40),
+
+          // Новый дизайн карусели
+          SizedBox(
+            height: isSmallScreen ? 500 : 600,
+            child: PageView.builder(
+              controller:
+                  PageController(viewportFraction: isSmallScreen ? 0.85 : 0.7),
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemCount: _schedules.length,
+              itemBuilder: (context, index) {
+                final schedule = _schedules[index];
+                return AnimatedScale(
+                  duration: 300.ms,
+                  scale: _currentIndex == index ? 1 : 0.9,
+                  child: _buildTimelineCard(schedule, isSmallScreen),
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          // Индикаторы с анимацией
+          Wrap(
+            spacing: 8,
+            children: List.generate(_schedules.length, (index) {
+              return AnimatedContainer(
+                  duration: 300.ms,
+                  width: _currentIndex == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentIndex == index
+                        ? const Color(AppConstants.primaryColorValue)
+                        : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10),
+                  ));
+            }),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildScheduleCard(Map<String, dynamic> schedule, bool isSmallScreen) {
-    final titleFontSize = isSmallScreen ? 20.0 : 24.0;
-    final locationFontSize = isSmallScreen ? 16.0 : 20.0;
-    final addressFontSize = isSmallScreen ? 14.0 : 16.0;
-    final timeFontSize = isSmallScreen ? 36.0 : 42.0;
-    final noteFontSize = isSmallScreen ? 12.0 : 14.0;
-    final imageHeight = isSmallScreen ? 180.0 : 250.0;
-    final padding = isSmallScreen ? 20.0 : 30.0;
-
+  Widget _buildTimelineCard(Map<String, dynamic> schedule, bool isSmallScreen) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
+            blurRadius: 30,
             offset: const Offset(0, 10),
-          ),
+          )
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
+          // Верхняя часть с изображением
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            child: Image.asset(
-              schedule['image'] as String,
-              height: imageHeight,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            child: Stack(
+              children: [
+                Image.asset(
+                  schedule['image'],
+                  height: isSmallScreen ? 180 : 250,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: schedule['color'] as Color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      schedule['icon'] as IconData,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ).animate().scale(delay: 200.ms),
+                ),
+              ],
             ),
           ),
+
+          // Нижняя часть с информацией
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(padding),
+              padding: EdgeInsets.all(isSmallScreen ? 20 : 30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // Время
                   Text(
-                    schedule['time'] as String,
+                    schedule['time'],
                     style: GoogleFonts.playfairDisplay(
-                      fontSize: timeFontSize,
-                      fontWeight: FontWeight.w400,
-                      color: const Color.fromRGBO(93,92,88,1),
-                      letterSpacing: 1,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.3),
-                          offset: const Offset(0, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
+                      fontSize: isSmallScreen ? 40 : 60,
+                      fontWeight: FontWeight.w700,
+                      color: schedule['color'] as Color,
                     ),
-                  ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-                    .scale(begin: const Offset(0.8, 0.8)),
+                  ).animate().fadeIn(delay: 100.ms),
+
+                  // Разделитель
+                  Container(
+                    width: 60,
+                    height: 3,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: schedule['color'] as Color,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ).animate().scaleX(begin: 0),
+
+                  // Название события
                   Text(
-                    schedule['title'] as String,
+                    schedule['title'],
                     textAlign: TextAlign.center,
                     style: GoogleFonts.playfairDisplay(
-                      fontSize: titleFontSize,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(AppConstants.textColorValue),
+                      fontSize: isSmallScreen ? 20 : 24,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
-                  ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-                    .slideY(begin: 0.3, end: 0),
+                  ).animate().fadeIn(delay: 200.ms),
+
+                  // Локация
                   Text(
-                    schedule['location'] as String,
+                    schedule['location'],
                     textAlign: TextAlign.center,
                     style: GoogleFonts.playfairDisplay(
-                      fontSize: locationFontSize,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(AppConstants.textColorValue),
+                      fontSize: isSmallScreen ? 16 : 18,
+                      color: Colors.grey.shade700,
                     ),
-                  ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-                    .slideY(begin: 0.3, end: 0),
+                  ).animate().fadeIn(delay: 300.ms),
+
+                  // Адрес
                   Text(
-                    schedule['address'] as String,
+                    schedule['address'],
                     textAlign: TextAlign.center,
                     style: GoogleFonts.playfairDisplay(
-                      fontSize: addressFontSize,
-                      color: const Color(AppConstants.textColorValue).withOpacity(0.8),
+                      fontSize: isSmallScreen ? 14 : 16,
+                      color: Colors.grey.shade600,
                     ),
-                  ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-                    .slideY(begin: 0.3, end: 0),
-                  const SizedBox(height: 25),
-                  if (schedule['showLocationButton'] == true)
-                    GestureDetector(
-                      onTap: _scrollToLocation,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: const Color(AppConstants.backgroundColorValue),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: const Color(AppConstants.primaryColorValue).withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: const Color(AppConstants.primaryColorValue),
-                              size: isSmallScreen ? 16 : 18,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'Где находится?',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.playfairDisplay(
-                                fontSize: noteFontSize,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(AppConstants.textColorValue),
-                              ),
-                            ),
-                          ],
-                        ),
+                  ).animate().fadeIn(delay: 400.ms),
+
+                  const SizedBox(height: 20),
+
+                  // Кнопка (если нужно)
+                  if (schedule['title'] == 'Фуршет')
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.map, size: 18),
+                      label: const Text('Показать на карте'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor:
+                            const Color(AppConstants.primaryColorValue),
+                        side: BorderSide(
+                            color: const Color(AppConstants.primaryColorValue)
+                                .withOpacity(0.3)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
                       ),
-                    ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-                      .slideY(begin: 0.3, end: 0)
-                  else
-                    if (schedule['showAttentionButton'] == true)
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: const Color(AppConstants.backgroundColorValue),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: const Color(AppConstants.primaryColorValue).withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            color: const Color(AppConstants.primaryColorValue),
-                            size: isSmallScreen ? 16 : 18,
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            'Пожалуйста, приходите\nза 15-20 минут до начала',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.playfairDisplay(
-                              fontSize: noteFontSize,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(AppConstants.textColorValue),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-                      .slideY(begin: 0.3, end: 0),
+                      onPressed: _scrollToLocation,
+                    )
+                        .animate()
+                        .fadeIn(delay: 500.ms)
+                        .shake(delay: 700.ms, hz: 3)
                 ],
               ),
             ),
           ),
         ],
       ),
-    ).animate().fadeIn(duration: const Duration(milliseconds: 800))
-      .slideY(begin: 0.2, end: 0);
+    );
   }
-} 
+}

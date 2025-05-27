@@ -8,155 +8,148 @@ import 'section_divider.dart';
 class DetailsSection extends StatelessWidget {
   const DetailsSection({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 600;
-    final textFontSize = isSmallScreen ? 16.0 : 20.0;
-    final padding = isSmallScreen ? 20.0 : 30.0;
+    final textFontSize = isSmallScreen ? 16.0 : 18.0;
+    final padding = isSmallScreen ? 20.0 : 40.0;
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 80, horizontal: padding),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: padding),
       decoration: BoxDecoration(
-        color: const Color(AppConstants.backgroundColorValue),
-        image: const DecorationImage(
-          image: AssetImage('assets/images/pattern.png'),
-          repeat: ImageRepeat.repeat,
-          opacity: 0.05,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(AppConstants.backgroundColorValue),
+            const Color(AppConstants.backgroundColorValue).withOpacity(0.9),
+          ],
         ),
       ),
       child: Column(
         children: [
           const SectionDivider(),
           const SectionTitle(
-            title: 'Детали',
-            subtitle: 'Важная информация',
+            title: 'Детали мероприятия',
+            subtitle: 'Важная информация для гостей',
           ),
-          const SizedBox(height: 40),
-          Container(
-            padding: EdgeInsets.all(padding),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildDetailItem(
-                  context,
-                  'Нам будет очень приятно если вместо цветов вы возьмете что-то, что можно прочесть, что можно выпить или во что можно поиграть.',
-                  Icons.card_giftcard,
-                  textFontSize,
-                ),
-                const SizedBox(height: 30),
-                _buildDetailItem(
-                  context,
-                  'До места проведения мероприятия будет организован трансфер.',
-                  Icons.directions_bus,
-                  textFontSize,
-                ),
-              ],
-            ),
+          const SizedBox(height: 50),
+          Wrap(
+            spacing: 30,
+            runSpacing: 30,
+            alignment: WrapAlignment.center,
+            children: [
+              _buildDetailCard(
+                context: context,
+                icon: Icons.card_giftcard,
+                title: "Пожелания по подаркам",
+                description: "Вместо традиционных цветов мы будем рады:",
+                items: [
+                  '📚 Книгам для нашей библиотеки',
+                  '🍷 Вину для особых случаев',
+                  '🎮 Настольным играм для вечеров',
+                ],
+                fontSize: textFontSize,
+                color: Colors.amber.shade50,
+              ),
+              _buildDetailCard(
+                context: context,
+                icon: Icons.directions_bus,
+                title: "Трансфер",
+                description: "Для вашего удобства будет организован трансфер от места сбора до места проведения мероприятия.",
+                fontSize: textFontSize,
+                color: Colors.lightBlue.shade50,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDetailItem(
-    BuildContext context,
-    String text,
-    IconData icon,
-    double fontSize,
-  ) {
-    if (icon == Icons.card_giftcard) {
-      return Column(
+  Widget _buildDetailCard({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String description,
+    List<String>? items,
+    required double fontSize,
+    required Color color,
+  }) {
+    return Container(
+      width: MediaQuery.of(context).size.width < 600 ? double.infinity : 400,
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                icon,
-                color: const Color(AppConstants.primaryColorValue),
-                size: 24,
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(AppConstants.primaryColorValue),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 15),
-              Expanded(
-                child: Text(
-                  'Нам будет очень приятно если вместо цветов вы возьмете:',
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: fontSize,
-                    color: const Color(AppConstants.textColorValue),
-                    height: 1.5,
-                  ),
+              Text(
+                title,
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: fontSize + 2,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(AppConstants.textColorValue),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 39),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSubItem('📚 Что можно прочесть', fontSize),
-                const SizedBox(height: 10),
-                _buildSubItem('🍷 Что можно выпить', fontSize),
-                const SizedBox(height: 10),
-                _buildSubItem('🎮 Во что можно поиграть', fontSize),
-              ],
-            ),
-          ),
-        ],
-      ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-        .slideX(begin: 0.2, end: 0);
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          icon,
-          color: const Color(AppConstants.primaryColorValue),
-          size: 24,
-        ),
-        const SizedBox(width: 15),
-        Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.playfairDisplay(
+          const SizedBox(height: 15),
+          Text(
+            description,
+            style: GoogleFonts.raleway(
               fontSize: fontSize,
               color: const Color(AppConstants.textColorValue),
-              height: 1.5,
+              height: 1.6,
             ),
           ),
-        ),
-      ],
-    ).animate().fadeIn(duration: const Duration(milliseconds: 500))
-      .slideX(begin: 0.2, end: 0);
-  }
-
-  Widget _buildSubItem(String text, double fontSize) {
-    return Row(
-      children: [
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: GoogleFonts.playfairDisplay(
-            fontSize: fontSize - 2,
-            color: const Color(AppConstants.textColorValue),
-            height: 1.5,
-          ),
-        ),
-      ],
+          if (items != null) ...[
+            const SizedBox(height: 15),
+            ...items.map((item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 5),
+                  Text(
+                    item,
+                    style: GoogleFonts.raleway(
+                      fontSize: fontSize,
+                      color: const Color(AppConstants.textColorValue),
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            )).toList(),
+          ],
+        ],
+      ),
+    ).animate().fadeIn(duration: 500.ms).scale(
+      begin: const Offset(0.9, 0.9),
+      end: const Offset(1, 1),
+      curve: Curves.easeOutBack,
     );
   }
-} 
+}

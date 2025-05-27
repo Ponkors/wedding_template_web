@@ -14,7 +14,7 @@ class AppConstants {
   static const int backgroundColorValue = 0xFFF8F9FA; // Светло-серый
   
   // Пути к изображениям
-  static const String heroBackgroundImage = 'assets/images/hero_bg.jpg';
+  static const String heroBackgroundImage = 'assets/images/hero_bg1.jpg';
   static const String brideImage = 'assets/images/bride.jpg';
   static const String groomImage = 'assets/images/groom.jpg';
   static const String storyImage1 = 'assets/images/story1.jpg';

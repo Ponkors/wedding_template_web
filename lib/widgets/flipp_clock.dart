@@ -44,7 +44,7 @@ class _FlippClockState extends State<FlippClock> {
           AppConstants.countDownTimerText,
           style: GoogleFonts.playfairDisplay(
             fontSize: titleFontSize,
-            color: const Color.fromRGBO(93,92,88,1),
+            color: Colors.white70,
             letterSpacing: 2,
             fontWeight: FontWeight.w300,
             shadows: [
@@ -101,7 +101,7 @@ class _FlippClockState extends State<FlippClock> {
           style: GoogleFonts.playfairDisplay(
             fontSize: numberFontSize,
             fontWeight: FontWeight.w400,
-            color: const Color.fromRGBO(93,92,88,1),
+            color: Colors.white70,
             letterSpacing: 1,
             shadows: [
               Shadow(
@@ -117,7 +117,7 @@ class _FlippClockState extends State<FlippClock> {
           label,
           style: GoogleFonts.playfairDisplay(
             fontSize: labelFontSize,
-            color: const Color.fromRGBO(93,92,88,0.8),
+            color: Colors.white70,
             letterSpacing: 2,
             fontWeight: FontWeight.w300,
           ),
@@ -133,7 +133,7 @@ class _FlippClockState extends State<FlippClock> {
         ':',
         style: GoogleFonts.playfairDisplay(
           fontSize: 36,
-            color: const Color.fromRGBO(93,92,88,0.5),
+            color: Colors.white70,
           fontWeight: FontWeight.w300,
         ),
       ),
